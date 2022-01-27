@@ -444,8 +444,22 @@ class SynthesizerPOMDP():
         self.synthesize()
         Profiler.print()
 
-    def run(self):
+    def restrict_to_circular(self):
+        for hole in self.quotient_container.design_space:
+            for i in hole.options:
+                if hole.name[0] == "M" and ((i < int(hole.name[-2]) and (i != 0))):
+                    hole.options.remove(i)
 
+    def strategy_counter(self):
+        self.quotient_container.pomdp_manager.set_memory_size(3) # try 1,2,3,4
+        self.quotient_container.unfold_partial_memory()
+        # TODO restrict memory
+
+        # circular
+        self.restrict_to_circular()
+        self.synthesize(self.quotient_container.design_space)
+
+    def run(self):
         # self.strategy()
         # self.strategy_2()
         # self.strategy_3()
